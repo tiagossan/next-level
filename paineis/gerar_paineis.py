@@ -311,12 +311,12 @@ def painel(path, tema, psd_path=None):
 
     # bloco do título
     c.layer("Título", "ACAMPAMENTO")
-    c.text("ACAMPAMENTO", W / 2, 690, 30, ink, align="center")
+    c.text("ACAMPAMENTO", W / 2, 960, 22, ink, align="center")
 
-    tc = 70
-    TY = 1010
+    tc = 50
+    TY = 1230
     sh = tema["sombra"]
-    off = 28
+    off = 20
     nx = W / 2 - text_width("NEXT", BOLD) * tc / 2
     c.layer("Título", "NEXT sombra")
     c.text("NEXT", nx + off, TY + off, tc, sh, font=BOLD)
@@ -329,24 +329,25 @@ def painel(path, tema, psd_path=None):
     c.text("LEVEL", lx, TY + 8 * tc, tc, tema["titulo"], font=BOLD)
 
     # linha "★ 2026 ★"
-    yc = 2140
+    yc = 2100
     c.layer("Título", "2026")
-    c.text("2026", W / 2, yc, 30, ink, align="center")
+    c.text("2026", W / 2, yc, 22, ink, align="center")
     c.layer("Título", "Estrelas 2026")
-    sw = text_width("2026") * 30 / 2
-    c.bitmap(STAR, W / 2 - sw - 80 - 9 * 26, yc - 10, 26, {"#": tema["destaque"]})
-    c.bitmap(STAR, W / 2 + sw + 80, yc - 10, 26, {"#": tema["destaque"]})
+    sw = text_width("2026") * 22 / 2
+    c.bitmap(STAR, W / 2 - sw - 60 - 9 * 19, yc - 7, 19, {"#": tema["destaque"]})
+    c.bitmap(STAR, W / 2 + sw + 60, yc - 7, 19, {"#": tema["destaque"]})
 
     # leão + montanhas
-    lc = 16
+    lc = 9
     lw, lh = len(LION[0]) * lc, len(LION) * lc
     lx, ly = W / 2 - lw / 2, 2470
     mt = mix(base, ink, tema["tom"] * 2.2)
     c.layer("Leão", "Montanhas")
-    for n, cx, cell in [(14, W / 2 - 900, 34), (19, W / 2 + 420, 34), (10, W / 2 - 1300, 30), (9, W / 2 + 1150, 30)]:
+    for n, cx, cell in [(9, W / 2 - 480, 22), (12, W / 2 + 300, 22), (6, W / 2 - 800, 20), (6, W / 2 + 700, 20)]:
         tw = (2 * n - 1) * cell
         c.bitmap(tri(n), cx - tw / 2, ly + lh - n * cell, cell, {"#": mt})
-    claro = mix(base, ink, tema["leao_claro"])
+    # leão quase em um tom só: as luzes viram um escuro só um pouco mais claro
+    claro = mix(ink, base, tema["leao_claro"])
     c.layer("Leão", "Leão contorno")
     c.bitmap(dilate(LION, 1), lx - lc, ly - lc, lc, {"#": base})
     c.layer("Leão", "Leão sombra")
@@ -355,22 +356,22 @@ def painel(path, tema, psd_path=None):
     c.bitmap(LION, lx, ly, lc, {"l": claro, "h": claro})
 
     # barra de nível
-    by = ly + lh + 120
-    bw, bh = 1300, 96
+    by = ly + lh + 150
+    bw, bh, bt = 960, 72, 10
     bx = W / 2 - bw / 2
     c.layer("Barra de nível", "LVL 26")
-    c.text("LVL 26", bx - 40, by + bh / 2 - 3.5 * 18, 18, ink, align="right")
+    c.text("LVL 26", bx - 34, by + bh / 2 - 3.5 * 14, 14, ink, align="right")
     c.layer("Barra de nível", "Moldura")
-    c.frame(bx, by, bw, bh, 12, ink)
+    c.frame(bx, by, bw, bh, bt, ink)
     c.layer("Barra de nível", "Preenchimento")
-    seg = 14
+    seg = 10
     segs = 15
-    sw_ = (bw - 24 - seg * (segs + 1)) / segs
+    sw_ = (bw - 2 * bt - seg * (segs + 1)) / segs
     filled = 11
-    c.rects([(bx + 12 + seg + i * (sw_ + seg), by + 12 + seg, sw_, bh - 24 - 2 * seg) for i in range(filled)],
+    c.rects([(bx + bt + seg + i * (sw_ + seg), by + bt + seg, sw_, bh - 2 * bt - 2 * seg) for i in range(filled)],
             tema["barra"])
     c.layer("Barra de nível", "73%")
-    c.text("73%", bx + bw + 40, by + bh / 2 - 3.5 * 18, 18, ink)
+    c.text("73%", bx + bw + 34, by + bh / 2 - 3.5 * 14, 14, ink)
 
     # rodapé
     fy = H - 290
@@ -397,11 +398,11 @@ def painel(path, tema, psd_path=None):
 TEMAS = {
     "ouro": dict(base=PALETA["ouro"], tom=0.10, seed=7, titulo=PALETA["preto"], sombra=PALETA["rosa"],
                  hud1=PALETA["preto"], coracao=PALETA["rosa"], brilho=PALETA["branco"],
-                 moeda=PALETA["rosa"], destaque=PALETA["rosa"], leao_claro=0.38,
+                 moeda=PALETA["rosa"], destaque=PALETA["rosa"], leao_claro=0.22,
                  barra=PALETA["rosa"], selo_fundo=PALETA["preto"], selo_texto=PALETA["ouro"]),
     "rosa": dict(base=PALETA["rosa"], tom=0.12, seed=11, titulo=PALETA["branco"], sombra=PALETA["preto"],
                  hud1=PALETA["branco"], coracao=PALETA["ouro"], brilho=PALETA["branco"],
-                 moeda=PALETA["ouro"], destaque=PALETA["ouro"], leao_claro=0.45,
+                 moeda=PALETA["ouro"], destaque=PALETA["ouro"], leao_claro=0.28,
                  barra=PALETA["ouro"], selo_fundo=PALETA["preto"], selo_texto=PALETA["rosa"]),
 }
 
