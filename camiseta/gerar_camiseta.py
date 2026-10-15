@@ -211,118 +211,6 @@ def frente(out):
     return cena
 
 
-# ---------------------------------------------------------------- costas
-def titulo(word, face, extr, p):
-    """Título em Press Start 2P com extrusão em degraus (3D arcade) e scanlines na face."""
-    m = text_bitmap(word, "PressStart2P-Regular.ttf")
-    S = 4  # sub-grade
-    m = m.repeat(S, 0).repeat(S, 1)
-    H, W = m.shape
-    depth = 3
-    g = np.full((H + depth, W + depth), None, dtype=object)
-    for k in range(depth, 0, -1):
-        g[k:k + H, k:k + W][m] = extr
-    face_rows = g[0:H, 0:W]
-    face_rows[m] = face
-    # scanlines: uma sub-linha vazada a cada 2 pixels da fonte (corta face e extrusão)
-    for r in range(2 * S - 1, H + depth, 2 * S):
-        g[r, :] = None
-    return g, p / S
-
-
-def costas(out):
-    W, H = 300, 400  # mm (A3 aprox.)
-    c = Cena(W, H)
-    m, L, t = 14, 34, 3.2
-    # cantos do HUD
-    for (x, y, sx, sy) in [(m, m, 1, 1), (W - m, m, -1, 1), (m, H - m, 1, -1), (W - m, H - m, -1, -1)]:
-        c.box(min(x, x + sx * L), min(y, y + sy * t), L, t, VERDE)
-        c.box(min(x, x + sx * t), min(y, y + sy * L), t, L, VERDE)
-
-    # HUD superior
-    hp = 1.6  # mm por pixel do HUD
-    top = 28
-    c.text("1P", 28, top, hp, VERDE, font="Silkscreen-Bold.ttf")
-    for i in range(4):
-        cor = ROSA if i < 3 else None
-        if cor:
-            c.rows(ICONS["heart"], 28 + i * 9 * hp, top + 9 * hp, hp, {"#": ROSA, "o": BRANCO})
-        else:  # coração vazio: só o contorno
-            hm = heart()
-            pad = np.pad(hm, 1)
-            edge = hm & ~(pad[:-2, 1:-1] & pad[2:, 1:-1] & pad[1:-1, :-2] & pad[1:-1, 2:])
-            c.mask(edge, 28 + i * 9 * hp, top + 9 * hp, hp, ROSA)
-    rx = W - 28
-    w25, _ = c.text("x 25", rx, top, hp, BRANCO, align="right")
-    c.rows(ICONS["coin"], rx - w25 - 11 * hp, top - hp / 2, hp, {"#": OURO, "o": None})
-    w03, _ = c.text("x 03", rx, top + 9 * hp, hp, BRANCO, align="right")
-    c.rows(ICONS["star"], rx - w03 - 12 * hp, top + 8 * hp, hp, {"#": OURO})
-
-    # ACAMPAMENTO
-    y = 82
-    c.text("ACAMPAMENTO", W / 2, y, 2.2, BRANCO, font="PressStart2P-Regular.ttf", align="center")
-
-    # NEXT / LEVEL
-    p = 5.0  # mm por pixel da fonte no título
-    y = 112
-    for word, face, extr in [("NEXT", VERDE, V_ESC), ("LEVEL", ROSA, R_ESC)]:
-        g, cell = titulo(word, face, extr, p)
-        c.grid(g, (W - g.shape[1] * cell) / 2, y, cell)
-        y += g.shape[0] * cell + 2.2 * p
-
-    # ★ 2026 ★
-    y += 2
-    w, h = c.text("2026", W / 2, y, 2.6, BRANCO, font="PressStart2P-Regular.ttf", align="center")
-    sp = 2.0
-    c.rows(ICONS["star"], W / 2 - w / 2 - 10 - 9 * sp, y - 1.5, sp, {"#": OURO})
-    c.rows(ICONS["star"], W / 2 + w / 2 + 10, y - 1.5, sp, {"#": OURO})
-    y += h + 26
-
-    # barra de nível
-    bw, bh, bt = 150, 14, 2
-    bx = (W - bw) / 2
-    lp = 1.5
-    c.text("LVL 26", bx - 6, y + bh / 2 - 3.5 * lp, lp, BRANCO, font="Silkscreen-Bold.ttf", align="right")
-    for r in [(bx, y, bw, bt), (bx, y + bh - bt, bw, bt), (bx, y, bt, bh), (bx + bw - bt, y, bt, bh)]:
-        c.box(*r, BRANCO)
-    segs, gap = 15, 2
-    sw = (bw - 2 * bt - gap * (segs + 1)) / segs
-    c.items.append((VERDE, [(bx + bt + gap + i * (sw + gap), y + bt + gap, sw, bh - 2 * bt - 2 * gap)
-                            for i in range(11)]))
-    c.text("73%", bx + bw + 6, y + bh / 2 - 3.5 * lp, lp, BRANCO, font="Silkscreen-Bold.ttf")
-    y += bh + 26
-
-    # ▶ PROSSIGO PARA O ALVO ◀
-    sp_ = 1.4
-    w, h = c.text("PROSSIGO PARA O ALVO", W / 2, y, sp_, VERDE, font="PressStart2P-Regular.ttf", align="center")
-    arrow = ["#...", "##..", "###.", "####", "###.", "##..", "#..."]
-    c.rows(arrow, W / 2 - w / 2 - 6 - 4 * sp_, y, sp_, {"#": ROSA})
-    c.rows([r[::-1] for r in arrow], W / 2 + w / 2 + 6, y, sp_, {"#": ROSA})
-
-    # rodapé: inTEENsos + selo LET'S START
-    fy = H - 52
-    fp = 1.1
-    word = "INTEENSOS"
-    x = 36
-    for i, ch in enumerate(word):
-        wch, _ = c.text(ch, x, fy, fp, BRANCO if 2 <= i <= 5 else VERDE, font="PressStart2P-Regular.ttf")
-        x += 8 * fp
-    label = "LET'S START"
-    lm = text_bitmap(label, "PressStart2P-Regular.ttf")
-    lp2 = 1.1
-    tw, th = lm.shape[1] * lp2, lm.shape[0] * lp2
-    pad = 3.3
-    bx2 = W - 36 - tw - 2 * pad
-    # selo rosa com texto vazado (a cor da camiseta aparece no texto)
-    sel = np.full((lm.shape[0] + 2 * round(pad / lp2), lm.shape[1] + 2 * round(pad / lp2)), ROSA, dtype=object)
-    o = round(pad / lp2)
-    sel[o:o + lm.shape[0], o:o + lm.shape[1]][lm] = None
-    c.grid(sel, bx2, fy - pad, lp2)
-
-    salvar(c, out, "Camiseta_Costas_Tela_de_Game", "Camiseta Next Level - Costas")
-    return c
-
-
 def salvar(cena, out, nome, titulo_pdf):
     base = os.path.join(out, nome)
     cena.pdf(base + ".pdf", titulo_pdf)
@@ -333,6 +221,5 @@ def salvar(cena, out, nome, titulo_pdf):
 if __name__ == "__main__":
     out = sys.argv[1] if len(sys.argv) > 1 else HERE
     os.makedirs(out, exist_ok=True)
-    frente(out)
-    costas(out)
+    frente(out)  # as costas ficam em gerar_costas.py
     print("ok")
