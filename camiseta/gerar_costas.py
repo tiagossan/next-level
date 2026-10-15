@@ -339,7 +339,7 @@ def costas():
     a.add("HUD", "Corações", ROSA, hearts | empty)
     a.add("HUD", "Corações - brilho", BRANCO, hl)
     rx = GW - 56
-    for i, (label, icon, dx_icon, dy_icon) in enumerate([("x 25", "coin", 11, -1), ("x 03", "star", 12, -1)]):
+    for i, (label, icon, dx_icon, dy_icon) in enumerate([("x 26", "coin", 11, -1), ("x 07", "star", 12, -1)]):
         tb = text_bitmap(label, "Silkscreen-Bold.ttf")
         y = top + i * 9 * hu
         a.add("HUD", f"Texto {label}", BRANCO, stamp(tb, rx - tb.shape[1] * hu, y, hu))
@@ -349,8 +349,12 @@ def costas():
 
     # ---------- barra de nível
     yb = y26 + 66
-    bw, bh, bt = 280, 28, 4
-    bx = cx - bw // 2
+    bw, bh, bt = 260, 28, 4
+    lu = 3
+    lv = text_bitmap("LVL 26", "Silkscreen-Bold.ttf")
+    pc = text_bitmap("70x7%", "Silkscreen-Bold.ttf")
+    # centraliza o conjunto rótulo + barra + porcentagem
+    bx = cx - bw // 2 + (lv.shape[1] - pc.shape[1]) * lu // 2
     fr = blank()
     fr[yb:yb + bh, bx:bx + bw] = True
     fr[yb + bt:yb + bh - bt, bx + bt:bx + bw - bt] = False
@@ -362,25 +366,22 @@ def costas():
         x = bx + bt + gap + i * (sw + gap)
         fill[yb + bt + gap:yb + bh - bt - gap, x:x + sw] = True
     a.add("Barra de nível", "Preenchimento", VERDE, fill)
-    lu = 3
-    lv = text_bitmap("LVL 26", "Silkscreen-Bold.ttf")
     a.add("Barra de nível", "LVL 26", BRANCO, stamp(lv, bx - 12 - lv.shape[1] * lu, yb + bh // 2 - 10, lu))
-    pc = text_bitmap("73%", "Silkscreen-Bold.ttf")
-    a.add("Barra de nível", "73%", BRANCO, stamp(pc, bx + bw + 12, yb + bh // 2 - 10, lu))
+    a.add("Barra de nível", "70x7%", BRANCO, stamp(pc, bx + bw + 12, yb + bh // 2 - 10, lu))
 
     # ---------- rodapé
     fy = GH - 92
     u = 2
-    word = "INTEENSOS"
+    word = "JESUS WAY"
     wb = text_bitmap(word, "PressStart2P-Regular.ttf")
     green, white = blank(), blank()
     x0 = 70
     for i in range(len(word)):
         part = np.zeros_like(wb)
         part[:, i * 8:(i + 1) * 8] = wb[:, i * 8:(i + 1) * 8]
-        stamp(part, x0, fy, u, white if 2 <= i <= 5 else green)
-    a.add("Rodapé", "inTEENsos - IN SOS", VERDE, green)
-    a.add("Rodapé", "inTEENsos - TEEN", BRANCO, white)
+        stamp(part, x0, fy, u, white if i < 5 else green)
+    a.add("Rodapé", "Jesus Way - JESUS", BRANCO, white)
+    a.add("Rodapé", "Jesus Way - WAY", VERDE, green)
     lb = text_bitmap("LET'S START", "PressStart2P-Regular.ttf")
     pad = 6
     sw_, sh_ = lb.shape[1] * u + 2 * pad, lb.shape[0] * u + 2 * pad
