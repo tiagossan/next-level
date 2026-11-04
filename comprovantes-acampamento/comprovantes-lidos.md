@@ -19,3 +19,14 @@ Observações:
 - Na foto do #03, o topo do cupom (nome da loja e itens 001–002) ficou cortado.
 - Na foto do #10, a data não aparece.
 - Regra da planilha: entradas em espécie (lado direito do caixa) são lançadas como **"Entrada inscrição"**, sem nome da pessoa.
+
+## Conferência com a planilha (FLUXO DE CAIXA ACAMPAMENTO NEXT LEVEL 2026.xlsx)
+
+| Linha | Lançamento | Valor | Comprovantes | Situação |
+|---|---|---|---|---|
+| 52 | Alimentação – compras do Dogão (mercado) | 1.164,00 | #03 + #04 + #05 + #06 + #08 + #09 = 1.163,27 | Conferida (amarelo); diferença de R$ 0,73 |
+| 53 | Combustível – Dogão | 100,00 | #07 + #10 = 100,00 | Conferida (amarelo) |
+| 49 | Salgados – Bruno | 400,00 | #01 = 200,00 | Pendência: faltam R$ 200 |
+| — | (sem lançamento) | — | #02 NK bebidas 107,00 (02/11) | Pendência: cupom sem lançamento |
+
+Entradas de inscrição em espécie (linhas 10, 16, 17, 18, 22, 32, 34–38, 44, 45, 48 e 60) passaram a se chamar "ENTRADA INSCRIÇÃO", sem nome de pessoa.
